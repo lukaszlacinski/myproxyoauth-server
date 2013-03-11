@@ -15,11 +15,16 @@ By default, the service uses SQLite3 database. A path to the database file is se
 in myproxyoauth/myproxy-oauth/database.py. The directory with the database file must be
 writable by the 'globus' user.
 
+To generate web pages, the service uses templates stored in
+myproxyoauth/templates. The templates, and other static files stored in
+myproxyoauth/static like images or cascade style sheets can be easily edited
+and displayed directly in a web browser. The templates are accessible at
+https://<hostname>/oauth/templates/, and the static files at https://<hostname>/oauth/static/.
 
-To generate web pages, the service uses templates stored in myproxyoauth/templates.
-The templates, and other static files stored in myproxyoauth/static like images or cascade style sheets
-can be easily edited and displayed directly in a web browser. The templates are accessible
-at https://<hostname>/oauth/templates/, and the static files at https://<hostname>/oauth/static/.
+To use the service with Globus Online, Globus Online that acts here as an OAuth
+client has to be registered with the service first. To trigger the registration
+workflow, go to https://<hostname>/oauth/configure. A Globus Online user
+specified in the registration form will become an admin of the service.
 
 Prerequisite packages on Debian-based systems:
 
