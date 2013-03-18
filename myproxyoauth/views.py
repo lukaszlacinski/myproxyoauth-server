@@ -56,14 +56,20 @@ def configure():
         if admin.username != username:
             application.logger.warning('Configure: %s is trying to register GO'
                     ' with this MyProxy Delegation Service' % username)
-            return render_template('configure_error.html',
-                    message='You are not an admin of the MyProxy Delegation Service')
+            message = 'You are not an admin of the MyProxy Delegation Service'
+            resp = make_response(render_template('configure_error.html',
+                    message=message), 500)
+            resp.headers['X-Error-Message'] = message
+            return resp
 
     try:
         access_token = get_access_token(username, password, nexus_server)
     except Exception as e:
-        return render_template('configure_error.html', message
-                = 'Could not get access token. %s' % str(e))
+        message='Could not get access token. %s' % str(e)
+        resp = make_response(render_template('configure_error.html',
+                message=message), 500)
+        resp.headers['X-Error-Message'] = message
+        return resp
 
     client_id = 'myproxy:oa4mp,2012:/client/' \
         + ''.join([random.choice('0123456789abcdef') for i in range(32)])
@@ -71,7 +77,11 @@ def configure():
         (home_url, gateway_name, oauth_consumer_id, public_key) = register_go(
                 nexus_server, access_token, client_id, oauth_server)
     except Exception as e:
-        return render_template('configure_error.html', message=str(e))
+        message = str(e)
+        resp = make_response(render_template('configure_error.html',
+                message=message), 500)
+        resp.headers['X-Error-Message'] = message
+        return resp
 
     application.logger.debug('Registered: gateway_name: %s, home_url: %s,'
             ' oauth_consumer_id: %s'
@@ -249,8 +259,16 @@ def authorize():
     client = db_session.query(Client).\
             filter(Client.oauth_consumer_key==transaction.oauth_consumer_key).\
             first()
-    cert = myproxy.myproxy_logon(transaction.certreq, transaction.certlifetime,
-            username, passphrase, client.myproxy_server)
+    cert = None
+    try:
+        cert = myproxy.myproxy_logon(transaction.certreq, transaction.certlifetime,
+                username, passphrase, client.myproxy_server)
+    except Exception as e:
+            return render_template('authorize.html',
+                    client_name=client.name,
+                    client_url=client.home_url,
+                    temp_token=oauth_temp_token,
+                    retry_message=str(e))
 
     oauth_verifier = 'myproxy:oa4mp,2012:/verifier/' \
             + ''.join([random.choice('0123456789abcdef') for i in range(32)]) \

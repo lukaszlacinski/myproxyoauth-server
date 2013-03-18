@@ -1,19 +1,19 @@
-myproxyoauth-server
-===================
+myproxy-oauth
+=============
 
-MyProxy OAuth Delegation Service in Python
+MyProxy Delegation Service in Python
+------------------------------------
 
 The MyProxy Delegation Service is a Python implementation of MyProxy OAuth
 protocol, https://docs.google.com/document/pub?id=10SC7oSURc-EgxMQjcCS50gz0u2HzDJAFiG5hEHiSdxA.
 The package depends on Flask and SQLAlchemy. The service can be deployed to
 Apache with mod_wsgi. An examplary configuration file for Apache is in conf/.
 The file should be copied to /etc/apache2/conf.d/ on Debian-based systems, or
-to /etc/httpd/conf.d/ on Red Hat-based system. For security reasons, Apache runs
-the service as the 'globus' user.
+to /etc/httpd/conf.d/ on Red Hat-based system.
 
 By default, the service uses SQLite3 database. A path to the database file is set
-in myproxyoauth/myproxy-oauth/database.py. The directory with the database file must be
-writable by the 'globus' user.
+in myproxyoauth/database.py. The directory with the database file must be
+readable and writable by the 'www-data' user.
 
 To generate web pages, the service uses templates stored in
 myproxyoauth/templates/. The templates, and other static files stored in
@@ -28,9 +28,9 @@ specified in the registration form will become an admin of the service.
 
 Prerequisite packages on Debian-based systems:
 
-python
-python-openssl
-python-flask
-python-sqlalchemy
-libapache2-mod-wsgi
+* python >= 2.5
+* python-openssl
+* python-flask >= 0.7
+* python-sqlalchemy
+* libapache2-mod-wsgi
 
